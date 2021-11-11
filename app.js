@@ -17,7 +17,7 @@ const loginRouter = require("./routes/loginRouter");
 
 const app = express();
 const server = require("http").createServer(app); // 추가
-const io = require("socket.io")(server); // 추가
+const io = require("socket.io")(server, { cors: { origin: "*" } }); // 추가
 
 // 템플릿 엔진 설정
 app.set("view engine", "ejs");
