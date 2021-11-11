@@ -13,6 +13,7 @@ const indexRouter = require("./routes/indexRouter");
 const sampledataRouter = require("./routes/sampledataRouter");
 const chatRouter = require("./routes/chatRouter");
 const socketRouter = require("./routes/socketRouter");
+const loginRouter = require("./routes/loginRouter");
 
 const app = express();
 const server = require("http").createServer(app); // 추가
@@ -35,6 +36,7 @@ app.use("/", indexRouter);
 app.get("/sampledata", sampledataRouter);
 app.get("/dev_jwt", createJwt);
 app.get("/chat", chatRouter);
+app.post("/login", loginRouter);
 
 io.on("connection", (socket) => {
   socketController(io, socket);
