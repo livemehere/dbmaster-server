@@ -2,7 +2,7 @@ var express = require("express");
 var router = express.Router();
 
 router.post("/login", function (req, res, next) {
-  res.send("post요청성공했어임마");
+  res.json({ res: "OK" });
 });
 
 module.exports = router;
