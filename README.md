@@ -18,5 +18,14 @@
 # Socket 구조
 
 ```js
-
+socekt.on("connect", 콜백함수); // 소켓서버에 연결되면 콜백함수 실행
+socket.emit("message", { msg: 원하는데이터 }); // msg에 원하는 데이터를 담아서 서버로 전송
+socket.on("msgInbox", data); // 다른 클라이언트가 보낸 msg 수신대기
+socket.on("notice", data); // notice 채널을 수신대기
 ```
+
+## socket 현제상태
+
+- 접속시 환영 msg와 자신의 고유 socketID 를 받는다
+- 종료시 자신을 제외한 다른 유저들에게 접속종료를 알린다
+- msg를 보내면, 다른 모든 클라이언트들에게 전송
