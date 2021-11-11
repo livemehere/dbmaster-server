@@ -6,6 +6,7 @@ const logger = require("morgan");
 // 커스텀 모듈 만든거 임포트
 const authorization = require("./routes/authorization");
 const createJwt = require("./routes/createJwt");
+const socketController = require("./controller/socketController");
 
 // Router Import
 const indexRouter = require("./routes/indexRouter");
@@ -35,14 +36,11 @@ app.get("/api/sampledata", sampledataRouter);
 app.get("/dev_jwt", createJwt);
 app.get("/chat", chatRouter);
 
-io.sockets.on("connection", (socket) => {
+io.on("connection", (socket) => {
   // 클라이언트 접속
   console.log("a user connected!");
 
-  //   클라이언트 종료
-  socket.on("disconnect", () => {
-    console.log("user disconnect!");
-  });
+  socketController(socket);
 });
 
 module.exports = { app, server };
