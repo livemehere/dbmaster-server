@@ -37,10 +37,7 @@ app.get("/dev_jwt", createJwt);
 app.get("/chat", chatRouter);
 
 io.on("connection", (socket) => {
-  // 클라이언트 접속
-  console.log("a user connected!");
-
-  socketController(socket);
+  socketController(io, socket);
 });
 
 module.exports = { app, server };
