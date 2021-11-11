@@ -32,7 +32,7 @@ app.use("/api", authorization); //내가 커스텀한 API 를 설정하고싶을
 
 // REST API 목록
 app.use("/", indexRouter);
-app.get("/api/sampledata", sampledataRouter);
+app.get("/sampledata", sampledataRouter);
 app.get("/dev_jwt", createJwt);
 app.get("/chat", chatRouter);
 

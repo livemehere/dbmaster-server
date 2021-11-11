@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const db = require("../config/db");
 
-router.get("/api/sampledata", async (req, res, next) => {
+router.get("/sampledata", async (req, res, next) => {
   db.query("SELECT * FROM Student", function (err, rows, fields) {
     if (err) throw err;
     rows.map((item) => {
