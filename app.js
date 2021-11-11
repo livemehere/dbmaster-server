@@ -10,8 +10,12 @@ const createJwt = require("./routes/createJwt");
 // Router Import
 const indexRouter = require("./routes/indexRouter");
 const sampledataRouter = require("./routes/sampledataRouter");
+const chatRouter = require("./routes/chatRouter");
+const socketRouter = require("./routes/socketRouter");
 
 const app = express();
+const server = require("http").createServer(app); // 추가
+const io = require("socket.io")(server); // 추가
 
 // 템플릿 엔진 설정
 app.set("view engine", "ejs");
@@ -29,5 +33,16 @@ app.use("/api", authorization); //내가 커스텀한 API 를 설정하고싶을
 app.use("/", indexRouter);
 app.get("/api/sampledata", sampledataRouter);
 app.get("/dev_jwt", createJwt);
+app.get("/chat", chatRouter);
 
-module.exports = app;
+io.sockets.on("connection", (socket) => {
+  // 클라이언트 접속
+  console.log("a user connected!");
+
+  //   클라이언트 종료
+  socket.on("disconnect", () => {
+    console.log("user disconnect!");
+  });
+});
+
+module.exports = { app, server };
