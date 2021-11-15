@@ -2,6 +2,33 @@ const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
+// 파일 업로드 부분
+const multer = require("multer");
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/");
+  },
+  filename: (req, file, cb) => {
+    const fileName = file.originalname.toLowerCase().split(" ").join("-");
+    cb(null, fileName);
+  },
+});
+const upload = multer({
+  storage: storage,
+  fileFilter: (req, file, cb) => {
+    if (
+      file.mimetype == "image/png" ||
+      file.mimetype == "image/jpg" ||
+      file.mimetype == "image/jpeg" ||
+      file.mimetype == "image/gif"
+    ) {
+      cb(null, true);
+    } else {
+      cb(null, false);
+      return cb(new Error("Allowed only .png, .jpg, .jpeg and .gif"));
+    }
+  },
+});
 
 // 커스텀 모듈 만든거 임포트
 const authorization = require("./routes/authorization");
@@ -13,6 +40,8 @@ const indexRouter = require("./routes/indexRouter");
 const sampledataRouter = require("./routes/sampledataRouter");
 const chatRouter = require("./routes/chatRouter");
 const loginRouter = require("./routes/loginRouter");
+const uploadImgRouter = require("./routes/uploadImgRouter");
+const testSiteRouter = require("./routes/testSiteRouter");
 
 const app = express();
 const server = require("http").createServer(app); // 추가
@@ -34,27 +63,15 @@ app.use("/api", authorization); //내가 커스텀한 API 를 설정하고싶을
 app.use("/", indexRouter);
 app.get("/sampledata", sampledataRouter);
 app.get("/dev_jwt", createJwt);
+
 app.get("/chat", chatRouter);
+app.get("/testsite", testSiteRouter);
+
 app.post("/login", loginRouter);
+app.post("/uploadImg", upload.single("testimage"), uploadImgRouter);
 
 io.on("connection", (socket) => {
   socketController(io, socket);
-});
-
-// TODO: catch 404 and forward to error handler
-app.use(function (req, res, next) {
-  next(createError(404));
-});
-
-// TODO: error handler
-app.use(function (err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get("env") === "development" ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.render("error");
 });
 
 module.exports = { app, server };
