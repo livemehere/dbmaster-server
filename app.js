@@ -12,7 +12,6 @@ const socketController = require("./controller/socketController");
 const indexRouter = require("./routes/indexRouter");
 const sampledataRouter = require("./routes/sampledataRouter");
 const chatRouter = require("./routes/chatRouter");
-const socketRouter = require("./routes/socketRouter");
 const loginRouter = require("./routes/loginRouter");
 
 const app = express();
@@ -40,6 +39,22 @@ app.post("/login", loginRouter);
 
 io.on("connection", (socket) => {
   socketController(io, socket);
+});
+
+// TODO: catch 404 and forward to error handler
+app.use(function (req, res, next) {
+  next(createError(404));
+});
+
+// TODO: error handler
+app.use(function (err, req, res, next) {
+  // set locals, only providing error in development
+  res.locals.message = err.message;
+  res.locals.error = req.app.get("env") === "development" ? err : {};
+
+  // render the error page
+  res.status(err.status || 500);
+  res.render("error");
 });
 
 module.exports = { app, server };
