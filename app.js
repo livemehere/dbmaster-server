@@ -2,6 +2,7 @@ const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
+
 // 파일 업로드 부분
 const multer = require("multer");
 const storage = multer.diskStorage({
@@ -68,7 +69,7 @@ app.get("/chat", chatRouter);
 app.get("/testsite", testSiteRouter);
 
 app.post("/login", loginRouter);
-app.post("/uploadImg", upload.single("testimage"), uploadImgRouter);
+app.post("/uploadImg", upload.single("provfile_img"), uploadImgRouter);
 
 io.on("connection", (socket) => {
   socketController(io, socket);
