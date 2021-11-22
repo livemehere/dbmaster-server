@@ -60,14 +60,17 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 app.use("/api", authorization); //내가 커스텀한 API 를 설정하고싶을때는, express.Router()를 사용하는 것이 아니라, 그냥 함수만 지정해야됨
 
-// REST API 목록
+// html route
 app.use("/", indexRouter);
-app.get("/sampledata", sampledataRouter);
-app.get("/dev_jwt", createJwt);
-
 app.get("/chat", chatRouter);
 app.get("/testsite", testSiteRouter);
+app.get("/daum", (req, res) => {
+  res.render("daum");
+});
 
+// API service
+app.get("/sampledata", sampledataRouter);
+app.get("/dev_jwt", createJwt);
 app.post("/login", loginRouter);
 app.post("/uploadImg", upload.single("provfile_img"), uploadImgRouter);
 
