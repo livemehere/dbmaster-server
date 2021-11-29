@@ -45,8 +45,9 @@ const uploadImgRouter = require("./routes/uploadImgRouter");
 const testSiteRouter = require("./routes/testSiteRouter");
 
 const app = express();
-const server = require("http").createServer(app); // 추가
-const io = require("socket.io")(server, { cors: { origin: "*" } }); // 추가
+const http = require('http');
+const server = http.createServer(app);
+var io = require('socket.io')(server);
 
 // 템플릿 엔진 설정
 app.set("view engine", "ejs");
@@ -78,4 +79,6 @@ io.on("connection", (socket) => {
   socketController(io, socket);
 });
 
-module.exports = { app, server };
+server.listen(3000,()=>{
+  console.log("server is running on port 3000");
+})
