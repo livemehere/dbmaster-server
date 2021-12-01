@@ -2,18 +2,17 @@ var express = require("express");
 var router = express.Router();
 const db = require("../config/db");
 
-router.post("/login", function (req, res, next) {
-  const userId = req.body.id;
-  const userPw = req.body.pw;
+router.get("/userInfo/:id", function (req, res, next) {
+  const userId = req.params.id;
 
   //TODO: 인자들 필수로 입력받도록 하기
-  if (!userId || !userPw) {
+  if (!userId) {
     res.send("please send required element!");
     return;
   }
 
   db.query(
-    `SELECT password FROM ch_user WHERE id='${userId}'`,
+    `SELECT * FROM ch_user WHERE id='${userId}'`,
     function (error, results, fields) {
       // TODO: 기본에러처리
       if (error) {
@@ -25,12 +24,8 @@ router.post("/login", function (req, res, next) {
         res.send({ res: false, msg: "존재하지않는 ID입니다" });
         return;
       }
-      // TODO: 비밀번호가 맞지 않을 경우
-      if (userPw == results[0].password) {
-        res.send({ res: true, msg: "login success" });
-      } else {
-        res.send({ res: false, msg: "비밀번호가 맞지 않습니다" });
-      }
+
+      res.send({ data: results[0] });
     }
   );
 });

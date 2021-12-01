@@ -43,11 +43,14 @@ const chatRouter = require("./routes/chatRouter");
 const loginRouter = require("./routes/loginRouter");
 const uploadImgRouter = require("./routes/uploadImgRouter");
 const testSiteRouter = require("./routes/testSiteRouter");
+const userInfoRouter = require("./routes/userInfoRouter");
+const mypageRouter = require("./routes/mypageRouter");
 
 const app = express();
-const http = require('http');
+const http = require("http");
+const { SocketAddress } = require("net");
 const server = http.createServer(app);
-var io = require('socket.io')(server);
+var io = require("socket.io")(server);
 
 // 템플릿 엔진 설정
 app.set("view engine", "ejs");
@@ -72,6 +75,9 @@ app.get("/daum", (req, res) => {
 // API service
 app.get("/sampledata", sampledataRouter);
 app.get("/dev_jwt", createJwt);
+app.get("/userInfo/:id", userInfoRouter);
+app.get("/mypage/:id", mypageRouter);
+
 app.post("/login", loginRouter);
 app.post("/uploadImg", upload.single("provfile_img"), uploadImgRouter);
 
@@ -79,6 +85,6 @@ io.on("connection", (socket) => {
   socketController(io, socket);
 });
 
-server.listen(3000,()=>{
-  console.log("server is running on port 3000");
-})
+server.listen(5252, () => {
+  console.log("server is running on port 5252");
+});
