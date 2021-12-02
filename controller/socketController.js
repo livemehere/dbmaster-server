@@ -28,7 +28,7 @@ function socketController(io, socket) {
     const targetSocketID = findSocketIdByuserID(data.targetUserID);
     // console.log(`user가 있는가? : ${targetSocketID}`);
 
-    if (targetSocketID != null) {
+    if (targetSocketID != undefined) {
       socket.to(targetSocketID).emit("chat", data);
       console.log("전송완료");
     } else {

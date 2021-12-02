@@ -31,6 +31,7 @@ $("#check-my-id").click(() => {
 // 보내기 버튼 누르거나
 $("#send").click(() => {
   const payload = $("#chat-input").val();
+  if (payload == "") return;
   displayMyMsgBox(payload, moment().format("LT"));
   sendMessage();
 });
@@ -39,6 +40,7 @@ $("#send").click(() => {
 $("#chat-input").on("keyup", function (key) {
   if (key.keyCode == 13) {
     const payload = $("#chat-input").val();
+    if (payload == "") return;
     displayMyMsgBox(payload, moment().format("LT"));
     sendMessage();
   }
@@ -50,6 +52,7 @@ function sendMessage() {
   const targetUserID = $("#targetUserID").val();
   const payload = $("#chat-input").val();
 
+  //TODO: 메세지 포맷
   socket.emit("chat", {
     payload,
     targetUserID,
