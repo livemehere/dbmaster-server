@@ -3,32 +3,26 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 
-// 파일 업로드 부분
 const multer = require("multer");
+
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/");
+  destination: function (req, file, cb) {
+    console.log("fileDestination");
+    cb(null, "upload/"); // 파일 업로드 경로
   },
-  filename: (req, file, cb) => {
-    const fileName = file.originalname.toLowerCase().split(" ").join("-");
-    cb(null, fileName);
+  filename: function (req, file, cb) {
+    // 파일명에서 확장자만 추출하기
+    console.log("fileName");
+
+    const userID = req.params.userID;
+    const idx = file.originalname.indexOf(".");
+    const format = file.originalname.substring(idx);
+    cb(null, userID + format); //사용자이름 + 파일포맷으로 설정
   },
 });
+
 const upload = multer({
   storage: storage,
-  fileFilter: (req, file, cb) => {
-    if (
-      file.mimetype == "image/png" ||
-      file.mimetype == "image/jpg" ||
-      file.mimetype == "image/jpeg" ||
-      file.mimetype == "image/gif"
-    ) {
-      cb(null, true);
-    } else {
-      cb(null, false);
-      return cb(new Error("Allowed only .png, .jpg, .jpeg and .gif"));
-    }
-  },
 });
 
 // 커스텀 모듈 만든거 임포트
@@ -45,6 +39,7 @@ const uploadImgRouter = require("./routes/uploadImgRouter");
 const testSiteRouter = require("./routes/testSiteRouter");
 const userInfoRouter = require("./routes/userInfoRouter");
 const mypageRouter = require("./routes/mypageRouter");
+const uploadRouter = require("./routes/uploadRouter");
 
 const app = express();
 const http = require("http");
@@ -62,6 +57,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "upload")));
 app.use("/api", authorization); //내가 커스텀한 API 를 설정하고싶을때는, express.Router()를 사용하는 것이 아니라, 그냥 함수만 지정해야됨
 
 // html route
@@ -77,9 +73,10 @@ app.get("/sampledata", sampledataRouter);
 app.get("/dev_jwt", createJwt);
 app.get("/userInfo/:id", userInfoRouter);
 app.get("/mypage/:id", mypageRouter);
+app.get("/upload", uploadRouter);
 
 app.post("/login", loginRouter);
-app.post("/uploadImg", upload.single("provfile_img"), uploadImgRouter);
+app.post("/uploadImg/:userID", upload.single("image"), uploadImgRouter);
 
 io.on("connection", (socket) => {
   socketController(io, socket);

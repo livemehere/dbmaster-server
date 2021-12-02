@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UPLOAD</title>
+</head>
+<body>
+    <h1>파일을 업로드하세요</h1>
+    <input type="text" id="userID">
+    <form action="/uploadImg/kong" method="post" enctype="multipart/form-data">
+        <input type="file" name="image" id="file">
+        <input type="submit" id="uploadBtn">
+    </form>
+    <script>
+        
+        const uploadBtn = document.getElementById("uploadBtn");
+        const userID = document.getElementById('userID');
+        const file = document.getElementById('file');
+        
+        let formData = new FormData();
+
+        uploadBtn.addEventListener('click',(e)=>{
+            e.preventDefault();
+            formData.append('image',file.files[0]);
+
+            
+            fetch(`/uploadImg/${userID.value}`,{
+                body:formData,
+                method: 'POST',
+            }).then((res)=>{
+                console.log(res);
+            }).catch(err=>{
+                console.log(err)
+            })
+        })
+    </script>
+</body>
+</html>
