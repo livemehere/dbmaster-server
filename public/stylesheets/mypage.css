@@ -88,6 +88,17 @@
   color: #b9b9b9;
   font-size: 0.5rem;
 }
+.bubble {
+  background-color: rgb(255, 81, 81);
+  border-radius: 50%;
+  width: 1.5rem;
+  height: 1.5rem;
+  text-align: center;
+  color: white;
+  font-size: 0.7rem;
+  line-height: 1.5rem;
+  display: none;
+}
 
 /* 채팅창 */
 .chat-room-section {

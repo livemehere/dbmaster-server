@@ -40,6 +40,8 @@ const testSiteRouter = require("./routes/testSiteRouter");
 const userInfoRouter = require("./routes/userInfoRouter");
 const mypageRouter = require("./routes/mypageRouter");
 const uploadRouter = require("./routes/uploadRouter");
+const saveMsgRouter = require("./routes/saveMsgRouter");
+const msgLogRouter = require("./routes/msgLogRouter");
 
 const app = express();
 const http = require("http");
@@ -74,9 +76,11 @@ app.get("/dev_jwt", createJwt);
 app.get("/userInfo/:id", userInfoRouter);
 app.get("/mypage/:id", mypageRouter);
 app.get("/upload", uploadRouter);
+app.get("/msgLog", msgLogRouter); //대화기록 로드
 
 app.post("/login", loginRouter);
 app.post("/uploadImg/:userID", upload.single("image"), uploadImgRouter);
+app.post("/saveMsg", saveMsgRouter);
 
 io.on("connection", (socket) => {
   socketController(io, socket);

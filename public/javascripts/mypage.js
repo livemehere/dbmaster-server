@@ -18,9 +18,15 @@ socket.on("connect", () => {
 socket.on("chat", (data) => {
   console.log(data);
   if (data.sendUserID == $("#selected-room").val()) {
-    displayMsgBox(data);
+    displayMsgBox({
+      payload: data.payload,
+      timestamp: moment(data.timestamp).format("LT"),
+    });
   } else {
     // TODO: 여기에는 selected 는 아니지만 채팅방 목록에 존재한다면 받은 메세지 갯수를 카운팅해주세요
+    $(`#${data.sendUserID}-bubble`).show();
+    let mesCount = parseInt($(`#${data.sendUserID}-bubble`).html());
+    $(`#${data.sendUserID}-bubble`).html(++mesCount);
   }
 });
 
@@ -51,14 +57,32 @@ $("#chat-input").on("keyup", function (key) {
 function sendMessage() {
   const targetUserID = $("#targetUserID").val();
   const payload = $("#chat-input").val();
-
-  //TODO: 메세지 포맷
-  socket.emit("chat", {
+  // 메세지 포맷
+  const data = {
     payload,
     targetUserID,
     sendUserID: userID,
     timestamp: Date.now(),
-  });
+  };
+
+  //소켓으로 메시지전송
+  socket.emit("chat", data);
+
+  // DB에 메시지 저장
+  fetch("/saveMsg", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      // console.log(data);
+    })
+    .catch((error) => {
+      console.error(error);
+    });
 
   $("#chat-input").val("");
   $("#chat-input").focus();
@@ -144,22 +168,48 @@ function getChatRoomList() {
             <div class="chat-status-msg">${room.lastMsg}</div>
         </div>
         <div class="last-msg-time">10:23 AM</div>
+        <div class="mt-2 me-2 bubble" id="${room.userID}-bubble">0</div>
     </div>
     `;
     $(".chat-list").append(template);
   });
 }
 
+// TODO: 채팅을 읽었을떄!
 // 채팅방목록에서 선택한 것을 selected-room , targetUserID 값으로 세팅함
 $(".chat-list").click((e) => {
   const targetID = e.target.dataset.userid;
   const roomName = e.target.dataset.roomname;
   if (e.target.classList[0] == "chat-name") {
-    console.log(targetID);
     $("#selected-room").val(targetID);
     $("#targetUserID").val(targetID);
     $("#selected-room-name").val(roomName);
     chatMsgBoxInit();
+    // 채팅 버블이 쌓인것을 초기화
+    $(`#${targetID}-bubble`).html("0");
+    $(`#${targetID}-bubble`).hide();
+    // DB에서 해당유저와 대화내용을 가져와서 display 하기
+    fetch(`/msgLog?targetUserID=${userID}&sendUserID=${targetID}`)
+      .then((data) => data.json())
+      .then((data) => {
+        data.forEach((msg) => {
+          //타임스탬프를 정수로바꾸고 moment로 변경후 display
+          const covertedTimestamp = moment(parseInt(msg.timestamp)).format(
+            "LT"
+          );
+          //TODO: 내메시지랑, 상대메시지랑 인자받는방식이, 객채랑 , 일반으로 달라서 다르게 적용해줘야함
+          if (userID == msg.sendUserID) {
+            displayMyMsgBox(msg.payload, covertedTimestamp);
+          } else {
+            const msgFormat = {
+              payload: msg.payload,
+              timestamp: covertedTimestamp,
+            };
+            displayMsgBox(msgFormat);
+          }
+        });
+      })
+      .catch((err) => console.log(err));
   }
 });
 
@@ -173,7 +223,6 @@ $(".friends-list").click((e) => {
     $("#targetUserID").val(targetID);
     $("#selected-room-name").val(roomName);
 
-    console.log(targetID);
     chatMsgBoxInit();
   }
   //TODO: 삭제버튼 누를경우도 만들기
@@ -188,7 +237,7 @@ function displayMsgBox({ payload, timestamp }) {
   const template = `
   <div class="chat-msg other">${payload}</div>
   <div class="clear"></div>
-  <div class="chat-time chat-time-other">${moment(timestamp).format("LT")}</div>
+  <div class="chat-time chat-time-other">${timestamp}</div>
   <div class="clear"></div>
   `;
   $(".chat-msg-box").append(template);
@@ -202,5 +251,3 @@ function displayMyMsgBox(payload, timestamp) {
   `;
   $(".chat-msg-box").append(template);
 }
-
-console.log();
