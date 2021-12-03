@@ -22,9 +22,6 @@ function socketController(io, socket) {
   // 채팅메세지는 모두 여기로 통한다
   socket.on("chat", (data) => {
     console.log(data);
-    console.log("---온라인유저현황---");
-    console.log(onlineUser);
-    console.log("-----------------");
     const targetSocketID = findSocketIdByuserID(data.targetUserID);
     // console.log(`user가 있는가? : ${targetSocketID}`);
 
