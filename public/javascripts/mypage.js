@@ -4,7 +4,6 @@ console.log(`로그인한유저ID : ${userID}`);
 
 getFriendList();
 loadAllMsgData(); //채팅창만들고 버블만들고
-// bubbleAgain();
 
 // socket 접속
 const socket = io();
@@ -29,11 +28,10 @@ socket.on("chat", (data) => {
     let mesCount = parseInt($(`#${data.sendUserID}-bubble`).html());
     $(`#${data.sendUserID}-bubble`).html(++mesCount);
     $(`#${data.sendUserID}-last-msg`).html(data.payload);
+    $(`#${data.sendUserID}-last-time`).html(
+      moment(data.timestamp).format("LT")
+    );
   }
-});
-
-$("#check-my-id").click(() => {
-  console.log(socket.id);
 });
 
 // 보내기 버튼 누르거나
@@ -268,8 +266,8 @@ function initBubble(allMsg) {
     roomList.push(msg.sendUserID);
     roomList.push(msg.targetUserID);
     // TODO: 여기서멈춰
+
     if (msg.sendUserID != userID && msg.isRead >= 1) {
-      console.log(msg.sendUserID);
       let mesCount = parseInt($(`#${msg.sendUserID}-bubble`).html());
       $(`#${msg.sendUserID}-bubble`).show();
       $(`#${msg.sendUserID}-bubble`).html(++mesCount);
@@ -279,8 +277,6 @@ function initBubble(allMsg) {
   roomList = new Set(roomList);
   roomList = [...roomList];
   roomList = roomList.filter((id) => id != userID);
-
-  console.log(roomList);
 
   let formatedRoomList = [];
   let roomListLength = 0;
@@ -299,17 +295,14 @@ function initBubble(allMsg) {
             formatedRoomList.push(chatRoomFormat);
             roomListLength += 1;
             if (roomListLength == roomList.length) {
-              console.log(formatedRoomList);
               getChatRoomList(formatedRoomList);
             }
           })
           .catch((err) => console.log(err));
       })
       .catch((err) => console.log(err));
-    console.log(roomListLength);
     // 내 ID 랑 대상 ID랑 대화중 가장 최근의 대화 하나 만가져온다
   }
-  console.log("yu");
 
   // getChatRoomList(roomListFormat);
 }
@@ -331,11 +324,13 @@ function bubbleAgain() {
         roomList.push(msg.targetUserID);
         // TODO: 여기서멈춰
         if (msg.sendUserID != userID && msg.isRead >= 1) {
-          console.log(msg.sendUserID);
           let mesCount = parseInt($(`#${msg.sendUserID}-bubble`).html());
           $(`#${msg.sendUserID}-bubble`).show();
           $(`#${msg.sendUserID}-bubble`).html(++mesCount);
         }
+        $(`#${msg.sendUserID}-last-time`).html(
+          moment(parseInt(msg.timestamp)).format("LT")
+        );
       });
     })
     .catch((err) => console.log(err));
