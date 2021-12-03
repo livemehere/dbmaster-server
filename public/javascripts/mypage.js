@@ -4,6 +4,7 @@ console.log(`로그인한유저ID : ${userID}`);
 
 getFriendList();
 getChatRoomList();
+loadAllMsgData();
 
 // socket 접속
 const socket = io();
@@ -63,6 +64,7 @@ function sendMessage() {
     targetUserID,
     sendUserID: userID,
     timestamp: Date.now(),
+    isRead: 1,
   };
 
   //소켓으로 메시지전송
@@ -250,4 +252,26 @@ function displayMyMsgBox(payload, timestamp) {
   <div class="clear"></div>
   `;
   $(".chat-msg-box").append(template);
+}
+
+function loadAllMsgData() {
+  fetch(`/loadAllMsgData?userID=${userID}`)
+    .then((data) => data.json())
+    .then((data) => {
+      // console.log(data);
+      initBubble(data);
+    })
+    .catch((err) => console.log(err));
+}
+
+function initBubble(allMsg) {
+  allMsg.forEach((msg) => {
+    // console.log(msg);
+    if (msg.sendUserID != userID && msg.isRead >= 1) {
+      console.log(msg.sendUserID);
+      let mesCount = parseInt($(`#${msg.sendUserID}-bubble`).html());
+      $(`#${msg.sendUserID}-bubble`).show();
+      $(`#${msg.sendUserID}-bubble`).html(++mesCount);
+    }
+  });
 }

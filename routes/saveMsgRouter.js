@@ -7,16 +7,17 @@ router.post("/saveMsg", function (req, res, next) {
   const targetUserID = req.body.targetUserID;
   const sendUserID = req.body.sendUserID;
   const timestamp = req.body.timestamp;
+  const isRead = req.body.isRead;
 
   //TODO: 인자들 필수로 입력받도록 하기
-  if (!payload || !targetUserID || !sendUserID || !timestamp) {
+  if (!payload || !targetUserID || !sendUserID || !timestamp || !isRead) {
     res.send("please send required element!");
     return;
   }
   console.log(timestamp);
 
   db.query(
-    `INSERT INTO ch_message VALUES(default,'${payload}','${targetUserID}','${sendUserID}',${timestamp});`,
+    `INSERT INTO ch_message VALUES(default,'${payload}','${targetUserID}','${sendUserID}',${timestamp},${isRead});`,
     function (error, results, fields) {
       // TODO: 기본에러처리
       if (error) {

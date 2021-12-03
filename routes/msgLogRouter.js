@@ -11,7 +11,6 @@ router.get("/msgLog", function (req, res, next) {
     res.send("please send required element!");
     return;
   }
-
   db.query(
     `SELECT * FROM ch_message WHERE targetUserID='${targetUserID}' and sendUserID='${sendUserID}' OR targetUserID='${sendUserID}' and sendUserID='${targetUserID}' ORDER BY timestamp;`,
     function (error, results, fields) {
@@ -21,6 +20,17 @@ router.get("/msgLog", function (req, res, next) {
         return;
       }
       res.send(results);
+    }
+  );
+
+  db.query(
+    `UPDATE ch_message SET isRead=0 WHERE targetUserID='${targetUserID}' AND sendUserID='${sendUserID}';`,
+    function (error, results, fields) {
+      // TODO: 기본에러처리
+      if (error) {
+        res.status(400).send(error);
+        return;
+      }
     }
   );
 });
