@@ -3,8 +3,8 @@ const userID = $("#userid").val();
 console.log(`로그인한유저ID : ${userID}`);
 
 getFriendList();
-getChatRoomList();
-loadAllMsgData();
+loadAllMsgData(); //채팅창만들고 버블만들고
+// bubbleAgain();
 
 // socket 접속
 const socket = io();
@@ -28,6 +28,7 @@ socket.on("chat", (data) => {
     $(`#${data.sendUserID}-bubble`).show();
     let mesCount = parseInt($(`#${data.sendUserID}-bubble`).html());
     $(`#${data.sendUserID}-bubble`).html(++mesCount);
+    $(`#${data.sendUserID}-last-msg`).html(data.payload);
   }
 });
 
@@ -130,35 +131,31 @@ function getFriendList() {
   $(".friends-count").html(`친구 ${friendList.length}명`);
 }
 
-function getChatRoomList() {
+function getChatRoomList(chatRoomList) {
   $(".chat-list").html("");
   // TODO: 채팅목록 DB에서 불러오기
-  const chatRoomList = [];
+  // const chatRoomList = [];
 
-  chatRoomList.push({
-    roomNumber: 1,
-    userID: "ji",
-    roomName: "지인혁",
-    lastMsg: "자?",
-  });
-  chatRoomList.push({
-    roomNumber: 2,
-    userID: "admin",
-    roomName: "어드민",
-    lastMsg: "왜답장안해?",
-  });
-  chatRoomList.push({
-    roomNumber: 3,
-    userID: "lee",
-    roomName: "이승현",
-    lastMsg: "ㅇㅋ",
-  });
-  chatRoomList.push({
-    roomNumber: 4,
-    userID: "jo",
-    roomName: "조현빈",
-    lastMsg: "잔다",
-  });
+  // chatRoomList.push({
+  //   userID: "ji",
+  //   roomName: "지인혁",
+  //   lastMsg: "자?",
+  // });
+  // chatRoomList.push({
+  //   userID: "admin",
+  //   roomName: "어드민",
+  //   lastMsg: "왜답장안해?",
+  // });
+  // chatRoomList.push({
+  //   userID: "lee",
+  //   roomName: "이승현",
+  //   lastMsg: "ㅇㅋ",
+  // });
+  // chatRoomList.push({
+  //   userID: "jo",
+  //   roomName: "조현빈",
+  //   lastMsg: "잔다",
+  // });
 
   // 생성되있는 채팅방 목록 Display
   chatRoomList.forEach((room) => {
@@ -167,14 +164,15 @@ function getChatRoomList() {
       <div class="chat-photo flex-grow-2"></div>
         <div class="chat-description flex-grow-1">
             <div class="chat-name" data-userid="${room.userID}" data-roomname="${room.roomName}">${room.roomName}</div>
-            <div class="chat-status-msg">${room.lastMsg}</div>
+            <div class="chat-status-msg" id="${room.userID}-last-msg">${room.lastMsg}</div>
         </div>
-        <div class="last-msg-time">10:23 AM</div>
+        <div class="last-msg-time" id="${room.userID}-last-time">10:23 AM</div>
         <div class="mt-2 me-2 bubble" id="${room.userID}-bubble">0</div>
     </div>
     `;
     $(".chat-list").append(template);
   });
+  bubbleAgain();
 }
 
 // TODO: 채팅을 읽었을떄!
@@ -265,8 +263,11 @@ function loadAllMsgData() {
 }
 
 function initBubble(allMsg) {
+  let roomList = [];
   allMsg.forEach((msg) => {
-    // console.log(msg);
+    roomList.push(msg.sendUserID);
+    roomList.push(msg.targetUserID);
+    // TODO: 여기서멈춰
     if (msg.sendUserID != userID && msg.isRead >= 1) {
       console.log(msg.sendUserID);
       let mesCount = parseInt($(`#${msg.sendUserID}-bubble`).html());
@@ -274,4 +275,68 @@ function initBubble(allMsg) {
       $(`#${msg.sendUserID}-bubble`).html(++mesCount);
     }
   });
+  // 중복을 제거하고 메세지가 하나라도 있다면, 방을 만들기
+  roomList = new Set(roomList);
+  roomList = [...roomList];
+  roomList = roomList.filter((id) => id != userID);
+
+  console.log(roomList);
+
+  let formatedRoomList = [];
+  let roomListLength = 0;
+  for (const roomUserID of roomList) {
+    let chatRoomFormat = {};
+    // userID 를 하나하나 DB로 전송해서 유저네임을 받아온다
+    fetch(`/getUserNameByID?userID=${roomUserID}`)
+      .then((data) => data.json())
+      .then((data) => {
+        chatRoomFormat["userID"] = roomUserID;
+        chatRoomFormat["roomName"] = data.name;
+        fetch(`/getLastMsg?targetUserID=${userID}&sendUserID=${roomUserID}`)
+          .then((data) => data.json())
+          .then((data) => {
+            chatRoomFormat["lastMsg"] = data.payload;
+            formatedRoomList.push(chatRoomFormat);
+            roomListLength += 1;
+            if (roomListLength == roomList.length) {
+              console.log(formatedRoomList);
+              getChatRoomList(formatedRoomList);
+            }
+          })
+          .catch((err) => console.log(err));
+      })
+      .catch((err) => console.log(err));
+    console.log(roomListLength);
+    // 내 ID 랑 대상 ID랑 대화중 가장 최근의 대화 하나 만가져온다
+  }
+  console.log("yu");
+
+  // getChatRoomList(roomListFormat);
+}
+
+// {
+//   userID: "jo",
+//   roomName: "조현빈",
+//   lastMsg: "잔다",
+// }
+
+function bubbleAgain() {
+  fetch(`/loadAllMsgData?userID=${userID}`)
+    .then((data) => data.json())
+    .then((allMsg) => {
+      // console.log(data);
+      let roomList = [];
+      allMsg.forEach((msg) => {
+        roomList.push(msg.sendUserID);
+        roomList.push(msg.targetUserID);
+        // TODO: 여기서멈춰
+        if (msg.sendUserID != userID && msg.isRead >= 1) {
+          console.log(msg.sendUserID);
+          let mesCount = parseInt($(`#${msg.sendUserID}-bubble`).html());
+          $(`#${msg.sendUserID}-bubble`).show();
+          $(`#${msg.sendUserID}-bubble`).html(++mesCount);
+        }
+      });
+    })
+    .catch((err) => console.log(err));
 }
