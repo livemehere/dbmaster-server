@@ -1,6 +1,7 @@
 var express = require("express");
 var router = express.Router();
 const db = require("../config/db");
+const bcrypt = require("bcrypt");
 
 router.post("/login", function (req, res, next) {
   const userId = req.body.id;
@@ -25,12 +26,15 @@ router.post("/login", function (req, res, next) {
         res.send({ res: false, msg: "존재하지않는 ID입니다" });
         return;
       }
-      // TODO: 비밀번호가 맞지 않을 경우
-      if (userPw == results[0].password) {
-        res.send({ res: true, msg: "login success" });
-      } else {
-        res.send({ res: false, msg: "비밀번호가 맞지 않습니다" });
-      }
+
+      bcrypt.compare(userPw, results[0].password, (err, same) => {
+        console.log(same); //=> true
+        if (same) {
+          res.send({ res: true, msg: "login success" });
+        } else {
+          res.send({ res: false, msg: "비밀번호가 맞지 않습니다" });
+        }
+      });
     }
   );
 });

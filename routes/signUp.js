@@ -1,6 +1,7 @@
 var express = require("express");
 var router = express.Router();
 const db = require("../config/db");
+const bcrypt = require("bcrypt");
 
 router.post("/signUp", function (req, res, next) {
   const userid = req.body.userid;
@@ -16,8 +17,12 @@ router.post("/signUp", function (req, res, next) {
   const profileURL = req.body.profileURL;
   const statusMsg = "신규유저";
 
+  //비밀번호를 암호화함
+  const encryptedPW = bcrypt.hashSync(userpw, 10); //비밀번호 암호화
+  console.log(encryptedPW);
+
   db.query(
-    `INSERT INTO ch_user VALUES('${userid}','${userpw}','${username}','${usernickname}','${userid}.jpg',default,'${statusMsg}','${postcode}','${address}','${extraAddress}','${detailAddress}');`,
+    `INSERT INTO ch_user VALUES('${userid}','${encryptedPW}','${username}','${usernickname}','${userid}.jpg',default,'${statusMsg}','${postcode}','${address}','${extraAddress}','${detailAddress}');`,
     function (error, results, fields) {
       // TODO: 기본에러처리
       if (error) {

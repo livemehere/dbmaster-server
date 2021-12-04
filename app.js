@@ -2,9 +2,7 @@ const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
-
 const multer = require("multer");
-const bcrypt = require("bcrypt");
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -25,13 +23,6 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage: storage,
-});
-
-const PW = "abcd1234";
-const encryptedPW = bcrypt.hashSync(PW, 10); //비밀번호 암호화
-console.log(encryptedPW);
-bcrypt.compare(PW, encryptedPW, (err, same) => {
-  console.log(same); //=> true
 });
 
 // 커스텀 모듈 만든거 임포트
