@@ -554,3 +554,7 @@ $("#search-input").on("input", (e) => {
     createUserLi(user);
   }
 });
+
+$(".my-photo").click(function () {
+  window.location.href = `/edit/${userID}`;
+});

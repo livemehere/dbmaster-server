@@ -21,6 +21,9 @@ a {
   background-position: center;
   background-size: cover;
 }
+.my-photo {
+  cursor: pointer;
+}
 
 .title {
   font-size: 2rem;

@@ -61,6 +61,7 @@ const markAsReadRouter = require("./routes/markAsRead");
 const delFriendRouter = require("./routes/delFriend");
 const checkUserIDRouter = require("./routes/checkUserID");
 const signUpRouter = require("./routes/signUp");
+const editProfileRouter = require("./routes/editProfile");
 
 const app = express();
 const http = require("http");
@@ -95,6 +96,9 @@ app.get("/dev_jwt", createJwt);
 app.get("/userInfo/:id", userInfoRouter);
 app.get("/mypage/:id", mypageRouter);
 app.get("/signup", (req, res) => res.render("signup"));
+app.get("/edit/:userID", (req, res) =>
+  res.render("edit", { userID: req.params.userID })
+);
 app.get("/upload", uploadRouter);
 app.get("/msgLog", msgLogRouter); //대화기록 로드
 app.get("/loadAllMsgData", loadAllMsgDataRouter); //대화기록 로드
@@ -111,6 +115,7 @@ app.post("/saveMsg", saveMsgRouter);
 app.post("/addFriend", addFriendRouter);
 app.post("/delFriend", delFriendRouter);
 app.post("/signUp", signUpRouter);
+app.post("/editProfile", editProfileRouter);
 
 io.on("connection", (socket) => {
   socketController(io, socket);
