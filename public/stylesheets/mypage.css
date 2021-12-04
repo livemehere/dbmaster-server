@@ -38,6 +38,7 @@
 /* 친구목록 */
 .friends-list-section {
   overflow-y: scroll;
+  position: relative;
 }
 
 .friends-list-section::-webkit-scrollbar {
@@ -69,10 +70,20 @@
 .chat-status-msg {
   font-size: 0.5rem;
 }
-#remove-friend-btn,
+#remove-friend-1,
 #start-chat-btn {
   width: 1rem;
   cursor: pointer;
+}
+
+#find-btn {
+  cursor: pointer;
+  position: absolute;
+  top: 3rem;
+  right: 2%;
+}
+#remove-friend-btn {
+  width: 1rem;
 }
 
 /* 채팅방목록 */
@@ -127,6 +138,9 @@
 .chat-msg {
   padding: 0.5rem;
 }
+.chat-name {
+  cursor: pointer;
+}
 
 .other {
   background: #ededed;
@@ -159,4 +173,32 @@
   border: none;
   width: 80%;
   height: 2rem;
+}
+
+/* 모달 */
+.search-modal {
+  display: none;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.164);
+  position: fixed;
+  top: 0;
+}
+
+.modal-content {
+  width: 50vw;
+  height: 60vh;
+  background-color: white;
+  margin: auto;
+  margin-top: 5vh;
+}
+
+#add-btn {
+  float: right;
+  cursor: pointer;
+}
+
+.list-group {
+  max-height: 100%;
+  overflow-y: scroll;
 }

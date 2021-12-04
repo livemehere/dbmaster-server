@@ -17,14 +17,14 @@
     <button id="check-my-id">내 소켓아이디</button>
     <div class="container">
         <div class="nav-bar">
-
             <div class="my-photo flex-grow-2 me-3"></div>
             <div class="btn">로그아웃</div>
         </div>
         <div class="row">
             <div class="col-4 friends-list-section">
                 <div class="title">친구목록</div>
-                <div class="friends-count">친구 8명</div>
+                <div class="friends-count">친구 0명</div>
+                <img src="/img/addBtn.svg" class="btn" alt="" id="find-btn">
                 <hr>
                 <div class="friends-list">
                     <!-- 친구목록 동적 생성 -->
@@ -61,6 +61,21 @@
             </div>
         </div>
     </div>
+
+    <!-- 모달창(친구찾기) -->
+    <div class="search-modal">
+        <div class="modal-content">
+            <button type="button" class="btn-close mb-3" aria-label="Close" id="modal-close-btn"></button>
+            <form class="d-flex">
+                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" id="search-input">
+                <button class="btn btn-outline-success" type="submit" id="friend-search-btn">Search</button>
+              </form>
+              <ul class="list-group">
+                <!-- <li class="list-group-item">여기다 유저이름(지인혁 외 1명이 같은 친구입니다) <img src="/img/addBtn.svg" alt="" id="add-btn" data-userID="여기다유저아이디"></li> -->
+              </ul>
+        </div>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.24.0/axios.min.js" integrity="sha512-u9akINsQsAkG9xjc1cnGF4zw5TFDwkxuc9vUp5dltDWYCSmyd0meygbvgXrlc/z7/o4a19Fb5V0OUE58J7dcyw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>

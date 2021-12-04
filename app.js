@@ -45,6 +45,7 @@ const msgLogRouter = require("./routes/msgLogRouter");
 const loadAllMsgDataRouter = require("./routes/loadAllMsgDataRouter");
 const getUserNameByIDRouter = require("./routes/getUserNameByID");
 const getLastMsgRouter = require("./routes/getLastMsg");
+const getAllUserRouter = require("./routes/getAllUser");
 
 const app = express();
 const http = require("http");
@@ -83,6 +84,7 @@ app.get("/msgLog", msgLogRouter); //대화기록 로드
 app.get("/loadAllMsgData", loadAllMsgDataRouter); //대화기록 로드
 app.get("/getUserNameByID", getUserNameByIDRouter);
 app.get("/getLastMsg", getLastMsgRouter);
+app.get("/getAllUser", getAllUserRouter);
 
 app.post("/login", loginRouter);
 app.post("/uploadImg/:userID", upload.single("image"), uploadImgRouter);

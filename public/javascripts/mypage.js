@@ -4,6 +4,7 @@ console.log(`로그인한유저ID : ${userID}`);
 
 getFriendList();
 loadAllMsgData(); //채팅창만들고 버블만들고
+//TODO: 로딩시 친구목록 다 불러와서 화면에 띄우기
 
 // socket 접속
 const socket = io();
@@ -15,14 +16,44 @@ socket.on("connect", () => {
 });
 
 // 채팅 수신대기
-socket.on("chat", (data) => {
-  console.log(data);
+socket.on("chat", async (data) => {
+  // console.log(data);
   if (data.sendUserID == $("#selected-room").val()) {
     displayMsgBox({
       payload: data.payload,
       timestamp: moment(data.timestamp).format("LT"),
     });
   } else {
+    if (data != "해당유저는 온라인이 아닙니다") {
+      let chatRoomWillMade = true;
+      for (let i = 0; i < $(".chat-name").length; i++) {
+        if ($(".chat-name")[i].dataset.userid == data.sendUserID) {
+          chatRoomWillMade = false;
+        }
+      }
+      if (chatRoomWillMade) {
+        let userName;
+        await fetch(`/getUserNameByID?userID=${data.sendUserID}`)
+          .then((data) => data.json())
+          .then((data) => {
+            userName = data.name;
+          })
+          .catch((err) => console.log(err));
+        const template = `
+        <div class="chat-card" >
+          <div class="chat-photo flex-grow-2"></div>
+            <div class="chat-description flex-grow-1">
+                <div class="chat-name" data-userid="${data.sendUserID}" data-roomname="${userName}">${userName}</div>
+                <div class="chat-status-msg" id="${data.sendUserID}-last-msg"></div>
+            </div>
+            <div class="last-msg-time" id="${data.sendUserID}-last-time"></div>
+            <div class="mt-2 me-2 bubble" id="${data.sendUserID}-bubble">0</div>
+        </div>
+        `;
+        $(".chat-list").append(template);
+      }
+    }
+
     // TODO: 여기에는 selected 는 아니지만 채팅방 목록에 존재한다면 받은 메세지 갯수를 카운팅해주세요
     $(`#${data.sendUserID}-bubble`).show();
     let mesCount = parseInt($(`#${data.sendUserID}-bubble`).html());
@@ -40,6 +71,10 @@ $("#send").click(() => {
   if (payload == "") return;
   displayMyMsgBox(payload, moment().format("LT"));
   sendMessage();
+  // TODO: 여기에는 selected 는 아니지만 채팅방 목록에 존재한다면 받은 메세지 갯수를 카운팅해주세요
+
+  $(`#${$("#selected-room").val()}-last-msg`).html(payload);
+  $(`#${$("#selected-room").val()}-last-time`).html(moment().format("LT"));
 });
 
 // 엔터키 누르면 채팅내용 전송
@@ -49,6 +84,9 @@ $("#chat-input").on("keyup", function (key) {
     if (payload == "") return;
     displayMyMsgBox(payload, moment().format("LT"));
     sendMessage();
+
+    $(`#${$("#selected-room").val()}-last-msg`).html(payload);
+    $(`#${$("#selected-room").val()}-last-time`).html(moment().format("LT"));
   }
 });
 
@@ -93,18 +131,28 @@ function getFriendList() {
   // TODO: 친구목록 DB에서 불러오기
   const friendList = [];
   friendList.push({
-    userID: "rhdxoals",
+    userID: "admin",
     userName: "공태민",
     statusMsg: "안녕",
   });
   friendList.push({
-    userID: "admin",
-    userName: "어드민",
+    userID: "lee",
+    userName: "이승현",
     statusMsg: "아놔 디비",
   });
   friendList.push({
-    userID: "lee",
-    userName: "이승현",
+    userID: "jo",
+    userName: "조현빈",
+    statusMsg: "JSON 좋네",
+  });
+  friendList.push({
+    userID: "ji",
+    userName: "지인혁",
+    statusMsg: "JSON 좋네",
+  });
+  friendList.push({
+    userID: "choi",
+    userName: "최은진",
     statusMsg: "JSON 좋네",
   });
 
@@ -161,10 +209,16 @@ function getChatRoomList(chatRoomList) {
     <div class="chat-card" >
       <div class="chat-photo flex-grow-2"></div>
         <div class="chat-description flex-grow-1">
-            <div class="chat-name" data-userid="${room.userID}" data-roomname="${room.roomName}">${room.roomName}</div>
-            <div class="chat-status-msg" id="${room.userID}-last-msg">${room.lastMsg}</div>
+            <div class="chat-name" data-userid="${
+              room.userID
+            }" data-roomname="${room.roomName}">${room.roomName}</div>
+            <div class="chat-status-msg" id="${room.userID}-last-msg">${
+      room.lastMsg
+    }</div>
         </div>
-        <div class="last-msg-time" id="${room.userID}-last-time">10:23 AM</div>
+        <div class="last-msg-time" id="${room.userID}-last-time">${moment(
+      room.lsatMsgTime
+    ).format("LT")}</div>
         <div class="mt-2 me-2 bubble" id="${room.userID}-bubble">0</div>
     </div>
     `;
@@ -195,6 +249,7 @@ $(".chat-list").click((e) => {
           const covertedTimestamp = moment(parseInt(msg.timestamp)).format(
             "LT"
           );
+
           //TODO: 내메시지랑, 상대메시지랑 인자받는방식이, 객채랑 , 일반으로 달라서 다르게 적용해줘야함
           if (userID == msg.sendUserID) {
             displayMyMsgBox(msg.payload, covertedTimestamp);
@@ -222,6 +277,53 @@ $(".friends-list").click((e) => {
     $("#selected-room-name").val(roomName);
 
     chatMsgBoxInit();
+    //TODO: 여기서 채팅방을 생성해주세요
+    let chatRoomWillMade = true;
+    for (let i = 0; i < $(".chat-name").length; i++) {
+      if ($(".chat-name")[i].dataset.userid == targetID) {
+        chatRoomWillMade = false;
+      }
+    }
+    if (chatRoomWillMade) {
+      const template = `
+      <div class="chat-card" >
+        <div class="chat-photo flex-grow-2"></div>
+          <div class="chat-description flex-grow-1">
+              <div class="chat-name" data-userid="${targetID}" data-roomname="${roomName}">${roomName}</div>
+              <div class="chat-status-msg" id="${targetID}-last-msg"></div>
+          </div>
+          <div class="last-msg-time" id="${targetID}-last-time"></div>
+          <div class="mt-2 me-2 bubble" id="${targetID}-bubble">0</div>
+      </div>
+      `;
+      $(".chat-list").append(template);
+    }
+
+    // 채팅 버블이 쌓인것을 초기화
+    $(`#${targetID}-bubble`).html("0");
+    $(`#${targetID}-bubble`).hide();
+    // DB에서 해당유저와 대화내용을 가져와서 display 하기
+    fetch(`/msgLog?targetUserID=${userID}&sendUserID=${targetID}`)
+      .then((data) => data.json())
+      .then((data) => {
+        data.forEach((msg) => {
+          //타임스탬프를 정수로바꾸고 moment로 변경후 display
+          const covertedTimestamp = moment(parseInt(msg.timestamp)).format(
+            "LT"
+          );
+          //TODO: 내메시지랑, 상대메시지랑 인자받는방식이, 객채랑 , 일반으로 달라서 다르게 적용해줘야함
+          if (userID == msg.sendUserID) {
+            displayMyMsgBox(msg.payload, covertedTimestamp);
+          } else {
+            const msgFormat = {
+              payload: msg.payload,
+              timestamp: covertedTimestamp,
+            };
+            displayMsgBox(msgFormat);
+          }
+        });
+      })
+      .catch((err) => console.log(err));
   }
   //TODO: 삭제버튼 누를경우도 만들기
 });
@@ -231,6 +333,7 @@ function chatMsgBoxInit() {
   $(".chat-room-title").html($("#selected-room-name").val());
 }
 
+// 말풍선
 function displayMsgBox({ payload, timestamp }) {
   const template = `
   <div class="chat-msg other">${payload}</div>
@@ -239,6 +342,8 @@ function displayMsgBox({ payload, timestamp }) {
   <div class="clear"></div>
   `;
   $(".chat-msg-box").append(template);
+
+  $(".chat-msg-box").scrollTop($(".chat-msg-box").prop("scrollHeight")); //TODO: scroll
 }
 function displayMyMsgBox(payload, timestamp) {
   const template = `
@@ -248,6 +353,8 @@ function displayMyMsgBox(payload, timestamp) {
   <div class="clear"></div>
   `;
   $(".chat-msg-box").append(template);
+
+  $(".chat-msg-box").scrollTop($(".chat-msg-box").prop("scrollHeight")); //TODO: scroll
 }
 
 function loadAllMsgData() {
@@ -288,10 +395,12 @@ function initBubble(allMsg) {
       .then((data) => {
         chatRoomFormat["userID"] = roomUserID;
         chatRoomFormat["roomName"] = data.name;
+        // 내 ID 랑 대상 ID랑 대화중 가장 최근의 대화 하나 만가져온다
         fetch(`/getLastMsg?targetUserID=${userID}&sendUserID=${roomUserID}`)
           .then((data) => data.json())
           .then((data) => {
             chatRoomFormat["lastMsg"] = data.payload;
+            chatRoomFormat["lastMsgTime"] = data.timestamp;
             formatedRoomList.push(chatRoomFormat);
             roomListLength += 1;
             if (roomListLength == roomList.length) {
@@ -301,7 +410,6 @@ function initBubble(allMsg) {
           .catch((err) => console.log(err));
       })
       .catch((err) => console.log(err));
-    // 내 ID 랑 대상 ID랑 대화중 가장 최근의 대화 하나 만가져온다
   }
 
   // getChatRoomList(roomListFormat);
@@ -335,3 +443,61 @@ function bubbleAgain() {
     })
     .catch((err) => console.log(err));
 }
+
+// 친구 찾기 모달 열기
+$("#find-btn").click(() => {
+  loadUserListAndDisplay();
+  $(".search-modal").show();
+});
+
+// 유저 검색 버튼
+$("#friend-search-btn").click((e) => {
+  e.preventDefault();
+  // 유저목록 전체가져오기 GET요청
+
+  // 검색창으로 필터링
+});
+
+//친구 추가 버튼
+$("#add-btn").click((e) => {
+  //버튼누르먼 POST 요청(친구맺기)
+  //누르면 친구요청버튼 사라지기
+  //이미 친구입니다 텍스트 띄워주기
+  // GET 나의 친구리스트 다가져와서 화면에 보여주는 함수 만들기
+});
+
+//모달창 닫기 버튼
+$("#modal-close-btn").click((e) => {
+  $(".search-modal").hide();
+});
+
+function createUserLi(user) {
+  let li = `
+  <li class="list-group-item">${user.name} <img src="/img/addBtn.svg" alt="" id="add-btn" data-userID="${user.id}"></li>
+  `;
+
+  $(".list-group").append(li);
+}
+let userList = [];
+function loadUserListAndDisplay() {
+  fetch("/getAllUser")
+    .then((data) => data.json())
+    .then((users) => {
+      userList = users;
+      for (let user of users) {
+        createUserLi(user);
+      }
+    });
+  // li로 다 보여주기
+}
+let filterdUserList = [];
+$("#search-input").on("input", (e) => {
+  console.log($("#search-input").val());
+  filterdUserList = userList.filter((user) =>
+    user.name.includes($("#search-input").val())
+  );
+  $(".list-group").html("");
+  for (let user of filterdUserList) {
+    createUserLi(user);
+  }
+});
