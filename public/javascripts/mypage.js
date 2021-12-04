@@ -165,7 +165,7 @@ async function getFriendList() {
         <div class="friend-status-msg">${friend.statusMsg}</div>
     </div>
     <img src="/img/Logo.svg" alt="" class="flex-grow-2 me-2" id="start-chat-btn" data-userid="${friend.id}" data-roomname="${friend.name}">
-    <img src="/img/removeIcon.svg" alt="" class="flex-grow-2" id="remove-friend-btn">
+    <img src="/img/removeIcon.svg" alt="" class="flex-grow-2" data-userid="${friend.id}" id="remove-friend-btn">
     </div>
     `;
 
@@ -323,7 +323,22 @@ $(".friends-list").click((e) => {
         });
       })
       .catch((err) => console.log(err));
+  } else if (e.target.id == "remove-friend-btn") {
+    // TODO: 친구 삭제 버튼을 눌렀을 때
+    fetch(
+      `/delFriend?sendUserID=${userID}&targetUserID=${e.target.dataset.userid}`,
+      {
+        method: "POST",
+      }
+    )
+      .then((data) => data.json())
+      .then((res) => {
+        console.log(res);
+        getFriendList();
+      });
+    // console.log(e.target.dataset.userid);
   }
+
   //TODO: 삭제버튼 누를경우도 만들기
 });
 

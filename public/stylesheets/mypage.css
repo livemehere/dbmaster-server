@@ -1,6 +1,10 @@
 * {
   box-sizing: border-box;
 }
+a {
+  text-decoration: none;
+  color: #c571f8;
+}
 .col-4 {
   /* background-color: rgb(255, 219, 219); */
   height: 85vh;
@@ -87,6 +91,7 @@
 }
 #remove-friend-btn {
   width: 1rem;
+  cursor: pointer;
 }
 
 /* 채팅방목록 */

@@ -4,6 +4,7 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 
 const multer = require("multer");
+const bcrypt = require("bcrypt");
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -17,12 +18,20 @@ const storage = multer.diskStorage({
     const userID = req.params.userID;
     const idx = file.originalname.indexOf(".");
     const format = file.originalname.substring(idx);
+    //TODO: userID + format 이거를 URL로 저장하면될듯
     cb(null, userID + format); //사용자이름 + 파일포맷으로 설정
   },
 });
 
 const upload = multer({
   storage: storage,
+});
+
+const PW = "abcd1234";
+const encryptedPW = bcrypt.hashSync(PW, 10); //비밀번호 암호화
+console.log(encryptedPW);
+bcrypt.compare(PW, encryptedPW, (err, same) => {
+  console.log(same); //=> true
 });
 
 // 커스텀 모듈 만든거 임포트
@@ -49,6 +58,7 @@ const getAllUserRouter = require("./routes/getAllUser");
 const addFriendRouter = require("./routes/addFriend");
 const myFriendRouter = require("./routes/myFriend");
 const markAsReadRouter = require("./routes/markAsRead");
+const delFriendRouter = require("./routes/delFriend");
 
 const app = express();
 const http = require("http");
@@ -82,6 +92,7 @@ app.get("/sampledata", sampledataRouter);
 app.get("/dev_jwt", createJwt);
 app.get("/userInfo/:id", userInfoRouter);
 app.get("/mypage/:id", mypageRouter);
+app.get("/signup", (req, res) => res.render("signup"));
 app.get("/upload", uploadRouter);
 app.get("/msgLog", msgLogRouter); //대화기록 로드
 app.get("/loadAllMsgData", loadAllMsgDataRouter); //대화기록 로드
@@ -95,6 +106,7 @@ app.post("/login", loginRouter);
 app.post("/uploadImg/:userID", upload.single("image"), uploadImgRouter);
 app.post("/saveMsg", saveMsgRouter);
 app.post("/addFriend", addFriendRouter);
+app.post("/delFriend", delFriendRouter);
 
 io.on("connection", (socket) => {
   socketController(io, socket);
