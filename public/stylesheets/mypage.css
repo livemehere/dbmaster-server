@@ -8,6 +8,9 @@
   background: #ffffff;
   box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
 }
+.gray {
+  color: gray;
+}
 
 .title {
   font-size: 2rem;

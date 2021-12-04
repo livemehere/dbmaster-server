@@ -46,6 +46,9 @@ const loadAllMsgDataRouter = require("./routes/loadAllMsgDataRouter");
 const getUserNameByIDRouter = require("./routes/getUserNameByID");
 const getLastMsgRouter = require("./routes/getLastMsg");
 const getAllUserRouter = require("./routes/getAllUser");
+const addFriendRouter = require("./routes/addFriend");
+const myFriendRouter = require("./routes/myFriend");
+const markAsReadRouter = require("./routes/markAsRead");
 
 const app = express();
 const http = require("http");
@@ -85,10 +88,13 @@ app.get("/loadAllMsgData", loadAllMsgDataRouter); //대화기록 로드
 app.get("/getUserNameByID", getUserNameByIDRouter);
 app.get("/getLastMsg", getLastMsgRouter);
 app.get("/getAllUser", getAllUserRouter);
+app.get("/myFriend", myFriendRouter);
+app.get("/markAsRead", markAsReadRouter);
 
 app.post("/login", loginRouter);
 app.post("/uploadImg/:userID", upload.single("image"), uploadImgRouter);
 app.post("/saveMsg", saveMsgRouter);
+app.post("/addFriend", addFriendRouter);
 
 io.on("connection", (socket) => {
   socketController(io, socket);

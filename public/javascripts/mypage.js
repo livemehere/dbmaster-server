@@ -1,10 +1,10 @@
 // user ID 가져오기
 const userID = $("#userid").val();
 console.log(`로그인한유저ID : ${userID}`);
+let currentFriendList = [];
 
 getFriendList();
 loadAllMsgData(); //채팅창만들고 버블만들고
-//TODO: 로딩시 친구목록 다 불러와서 화면에 띄우기
 
 // socket 접속
 const socket = io();
@@ -23,6 +23,16 @@ socket.on("chat", async (data) => {
       payload: data.payload,
       timestamp: moment(data.timestamp).format("LT"),
     });
+
+    fetch(
+      `/markAsRead?sendUserID=${userID}&targetUserID=${$(
+        "#selected-room"
+      ).val()}`
+    )
+      .then((data) => data.json())
+      .then((res) => {
+        console.log(res);
+      });
   } else {
     if (data != "해당유저는 온라인이 아닙니다") {
       let chatRoomWillMade = true;
@@ -127,34 +137,23 @@ function sendMessage() {
   $("#chat-input").focus();
 }
 
-function getFriendList() {
+async function getFriendList() {
   // TODO: 친구목록 DB에서 불러오기
-  const friendList = [];
-  friendList.push({
-    userID: "admin",
-    userName: "공태민",
-    statusMsg: "안녕",
-  });
-  friendList.push({
-    userID: "lee",
-    userName: "이승현",
-    statusMsg: "아놔 디비",
-  });
-  friendList.push({
-    userID: "jo",
-    userName: "조현빈",
-    statusMsg: "JSON 좋네",
-  });
-  friendList.push({
-    userID: "ji",
-    userName: "지인혁",
-    statusMsg: "JSON 좋네",
-  });
-  friendList.push({
-    userID: "choi",
-    userName: "최은진",
-    statusMsg: "JSON 좋네",
-  });
+  $(".friends-list").html("");
+  let friendList = [];
+  await fetch(`/myFriend?userID=${userID}`)
+    .then((data) => data.json())
+    .then((friends) => {
+      console.log(friends);
+      currentFriendList = friends;
+      friendList = friends;
+    });
+
+  // friendList.push({
+  //   userID: "admin",
+  //   userName: "공태민",
+  //   statusMsg: "안녕",
+  // });
 
   // 친구 한명 한명 Display
   friendList.forEach((friend) => {
@@ -162,10 +161,10 @@ function getFriendList() {
     <div class="friend-card">
     <div class="friend-photo flex-grow-2"></div>
     <div class="friend-description flex-grow-1">
-        <div class="friend-name">${friend.userName}</div>
+        <div class="friend-name">${friend.name}</div>
         <div class="friend-status-msg">${friend.statusMsg}</div>
     </div>
-    <img src="/img/Logo.svg" alt="" class="flex-grow-2 me-2" id="start-chat-btn" data-userid="${friend.userID}" data-roomname="${friend.userName}">
+    <img src="/img/Logo.svg" alt="" class="flex-grow-2 me-2" id="start-chat-btn" data-userid="${friend.id}" data-roomname="${friend.name}">
     <img src="/img/removeIcon.svg" alt="" class="flex-grow-2" id="remove-friend-btn">
     </div>
     `;
@@ -446,6 +445,7 @@ function bubbleAgain() {
 
 // 친구 찾기 모달 열기
 $("#find-btn").click(() => {
+  $(".list-group").html("");
   loadUserListAndDisplay();
   $(".search-modal").show();
 });
@@ -458,9 +458,29 @@ $("#friend-search-btn").click((e) => {
   // 검색창으로 필터링
 });
 
+$(".list-group").click((e) => {
+  // 친구추가 버튼을 누른다면
+  if (e.target.dataset.userid != undefined) {
+    //버튼누르먼 POST 요청(친구맺기)
+    fetch(
+      `/addFriend?sendUserID=${userID}&targetUserID=${e.target.dataset.userid}`,
+      {
+        method: "POST",
+      }
+    )
+      .then((data) => data.json())
+      .then((res) => {
+        console.log(res);
+        getFriendList();
+        currentFriendList.push({ id: e.target.dataset.userid });
+      });
+  }
+});
+
 //친구 추가 버튼
 $("#add-btn").click((e) => {
-  //버튼누르먼 POST 요청(친구맺기)
+  console.log("e");
+
   //누르면 친구요청버튼 사라지기
   //이미 친구입니다 텍스트 띄워주기
   // GET 나의 친구리스트 다가져와서 화면에 보여주는 함수 만들기
@@ -472,8 +492,14 @@ $("#modal-close-btn").click((e) => {
 });
 
 function createUserLi(user) {
+  let userNameStatus = user.name;
+  for (let friend of currentFriendList) {
+    if (friend.id == user.id) {
+      userNameStatus = `${userNameStatus}(이미친구입니다)`;
+    }
+  }
   let li = `
-  <li class="list-group-item">${user.name} <img src="/img/addBtn.svg" alt="" id="add-btn" data-userID="${user.id}"></li>
+  <li class="list-group-item">${userNameStatus} <span class="gray newFriendID">(${user.id})</span> <img src="/img/addBtn.svg" alt="" id="add-btn" data-userID="${user.id}"></li>
   `;
 
   $(".list-group").append(li);
@@ -485,11 +511,14 @@ function loadUserListAndDisplay() {
     .then((users) => {
       userList = users;
       for (let user of users) {
-        createUserLi(user);
+        // li로 다 보여주기
+        if (user.id != userID) {
+          createUserLi(user);
+        }
       }
     });
-  // li로 다 보여주기
 }
+// 친구 검색 필터링 함수
 let filterdUserList = [];
 $("#search-input").on("input", (e) => {
   console.log($("#search-input").val());
