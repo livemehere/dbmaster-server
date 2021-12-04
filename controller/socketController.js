@@ -21,7 +21,14 @@ function socketController(io, socket) {
 
   // 채팅메세지는 모두 여기로 통한다
   socket.on("chat", (data) => {
-    console.log(data);
+    console.log(data)
+	console.log(typeof data);
+	if(typeof data == 'string'){
+		console.log('json으로 커버팅');
+		data = JSON.parse(data);
+		
+	}
+	  console.log(data.targetUserID);
     const targetSocketID = findSocketIdByuserID(data.targetUserID);
     // console.log(`user가 있는가? : ${targetSocketID}`);
 
