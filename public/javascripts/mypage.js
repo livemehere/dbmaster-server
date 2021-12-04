@@ -213,7 +213,9 @@ function getChatRoomList(chatRoomList) {
   chatRoomList.forEach((room) => {
     const template = `
     <div class="chat-card" >
-      <div class="chat-photo flex-grow-2"></div>
+      <div class="chat-photo flex-grow-2 style="background-image: url('/${
+        room.userID
+      }.jpg')"></div>
         <div class="chat-description flex-grow-1">
             <div class="chat-name" data-userid="${
               room.userID
@@ -293,7 +295,7 @@ $(".friends-list").click((e) => {
     if (chatRoomWillMade) {
       const template = `
       <div class="chat-card" >
-        <div class="chat-photo flex-grow-2"></div>
+        <div class="chat-photo flex-grow-2" style="background-image: url('/${targetID}.jpg')"></div>
           <div class="chat-description flex-grow-1">
               <div class="chat-name" data-userid="${targetID}" data-roomname="${roomName}">${roomName}</div>
               <div class="chat-status-msg" id="${targetID}-last-msg"></div>

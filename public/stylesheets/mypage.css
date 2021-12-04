@@ -16,7 +16,8 @@ a {
   color: gray;
 }
 .my-photo,
-.friend-photo {
+.friend-photo,
+.chat-photo {
   background-position: center;
   background-size: cover;
 }
