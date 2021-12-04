@@ -59,6 +59,8 @@ const addFriendRouter = require("./routes/addFriend");
 const myFriendRouter = require("./routes/myFriend");
 const markAsReadRouter = require("./routes/markAsRead");
 const delFriendRouter = require("./routes/delFriend");
+const checkUserIDRouter = require("./routes/checkUserID");
+const signUpRouter = require("./routes/signUp");
 
 const app = express();
 const http = require("http");
@@ -101,12 +103,14 @@ app.get("/getLastMsg", getLastMsgRouter);
 app.get("/getAllUser", getAllUserRouter);
 app.get("/myFriend", myFriendRouter);
 app.get("/markAsRead", markAsReadRouter);
+app.get("/checkUserID", checkUserIDRouter);
 
 app.post("/login", loginRouter);
 app.post("/uploadImg/:userID", upload.single("image"), uploadImgRouter);
 app.post("/saveMsg", saveMsgRouter);
 app.post("/addFriend", addFriendRouter);
 app.post("/delFriend", delFriendRouter);
+app.post("/signUp", signUpRouter);
 
 io.on("connection", (socket) => {
   socketController(io, socket);

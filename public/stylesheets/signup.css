@@ -26,3 +26,7 @@ input[type="password"] {
   color: white;
   background-color: #c571f8;
 }
+
+#checkID {
+  cursor: pointer;
+}
