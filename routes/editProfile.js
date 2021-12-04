@@ -1,10 +1,10 @@
 var express = require("express");
 var router = express.Router();
 const db = require("../config/db");
+const bcrypt = require("bcrypt");
 
 router.post("/editProfile", function (req, res, next) {
   const userid = req.body.userid;
-  const userpw = req.body.userpw;
   const username = req.body.username;
   const usernickname = req.body.usernickname;
   //유저 주소
@@ -16,14 +16,14 @@ router.post("/editProfile", function (req, res, next) {
   const statusMsg = req.body.statusMsg;
 
   db.query(
-    `UPDATE ch_user SET password='${userpw}',name='${username}',nickname='${usernickname}',statusMsg='${statusMsg}',postcode='${postcode}',address='${address}',extraAddress='${extraAddress}',detailAddress='${detailAddress}' WHERE id='${userid}'`,
+    `UPDATE ch_user SET name='${username}',nickname='${usernickname}',statusMsg='${statusMsg}',postcode='${postcode}',address='${address}',extraAddress='${extraAddress}',detailAddress='${detailAddress}' WHERE id='${userid}'`,
     function (error, results, fields) {
       // TODO: 기본에러처리
       if (error) {
         res.status(400).send(error);
         return;
       }
-      res.json("회원가입성공");
+      res.json("수정성공");
     }
   );
 });

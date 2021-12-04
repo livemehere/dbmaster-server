@@ -28,7 +28,7 @@ $("#change-img-btn").click(() => {
 $("#submit-btn").click(() => {
   //유저 기본정보
   const userid = $("#userid").val();
-  const userpw = $("#userpw").val();
+
   const username = $("#username").val();
   const usernickname = $("#usernickname").val();
   //유저 주소
@@ -39,7 +39,6 @@ $("#submit-btn").click(() => {
   const statusMsg = $("#statusMsg").val();
   if (
     !userid ||
-    !userpw ||
     !username ||
     !usernickname ||
     !postcode ||
@@ -59,7 +58,6 @@ $("#submit-btn").click(() => {
 
   let userInfo = {
     userid: userid,
-    userpw: userpw,
     username: username,
     usernickname: usernickname,
     postcode: postcode,
@@ -67,7 +65,6 @@ $("#submit-btn").click(() => {
     detailAddress: detailAddress,
     extraAddress: extraAddress,
     statusMsg: statusMsg,
-    qqq,
   };
 
   fetch("/editProfile", {
@@ -115,7 +112,6 @@ fetch(`/userInfo/${userID}`)
 
     //유저 기본정보
     $("#userid").val(userInfo.id);
-    $("#userpw").val(userInfo.password);
     $("#statusMsg").val(userInfo.statusMsg);
     $("#username").val(userInfo.name);
     $("#usernickname").val(userInfo.nickname);
@@ -125,3 +121,27 @@ fetch(`/userInfo/${userID}`)
     $("#sample6_detailAddress").val(userInfo.detailAddress);
     $("#sample6_extraAddress").val(userInfo.extraAddress);
   });
+
+$("#reset-pw").click(function () {
+  const userpw = $("#userpw").val();
+  let userInfo = {
+    userid: userID,
+    userpw: userpw,
+  };
+  if (userpw == "") {
+    alert("비밀번호를 입력해주세요");
+  } else {
+    fetch("/resetPw", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userInfo),
+    })
+      .then((data) => data.json())
+      .then((res) => {
+        console.log(res);
+        alert("비밀번호가 변경되었습니다");
+      });
+  }
+});

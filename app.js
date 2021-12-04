@@ -53,6 +53,7 @@ const delFriendRouter = require("./routes/delFriend");
 const checkUserIDRouter = require("./routes/checkUserID");
 const signUpRouter = require("./routes/signUp");
 const editProfileRouter = require("./routes/editProfile");
+const resetPwRouter = require("./routes/resetPw");
 
 const app = express();
 const http = require("http");
@@ -106,6 +107,7 @@ app.post("/saveMsg", saveMsgRouter);
 app.post("/addFriend", addFriendRouter);
 app.post("/delFriend", delFriendRouter);
 app.post("/signUp", signUpRouter);
+app.post("/resetPw", resetPwRouter);
 app.post("/editProfile", editProfileRouter);
 
 io.on("connection", (socket) => {

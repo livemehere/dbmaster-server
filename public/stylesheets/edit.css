@@ -32,3 +32,10 @@ input[type="password"] {
 #checkID {
   cursor: pointer;
 }
+
+#reset-pw {
+  background-color: #f66d6d;
+  border-radius: 5px;
+  cursor: pointer;
+  color: white;
+}
