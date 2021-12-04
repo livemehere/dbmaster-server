@@ -58,7 +58,7 @@ socket.on("chat", async (data) => {
           .catch((err) => console.log(err));
         const template = `
         <div class="chat-card" >
-          <div class="chat-photo flex-grow-2"></div>
+          <div class="chat-photo flex-grow-2 style="background-image: url('/${data.sendUserID}.jpg')"></div>
             <div class="chat-description flex-grow-1">
                 <div class="chat-name" data-userid="${data.sendUserID}" data-roomname="${userName}">${userName}</div>
                 <div class="chat-status-msg" id="${data.sendUserID}-last-msg"></div>
