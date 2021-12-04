@@ -10,14 +10,13 @@
 </head>
 <body>
     
-    <input type="text" id="userid" value=<%=id%> placeholder="userID">
-    <input type="text" id="targetUserID" placeholder="targetID">
-    <input type="text" id="selected-room" placeholder="selected-room">
-    <input type="text" id="selected-room-name" placeholder="selected-room-name">
-    <button id="check-my-id">내 소켓아이디</button>
+    <input type="hidden" id="userid" value=<%=id%> placeholder="userID">
+    <input type="hidden" id="targetUserID" placeholder="targetID">
+    <input type="hidden" id="selected-room" placeholder="selected-room">
+    <input type="hidden" id="selected-room-name" placeholder="selected-room-name">
     <div class="container">
         <div class="nav-bar">
-            <div class="my-photo flex-grow-2 me-3"></div>
+            <div class="my-photo flex-grow-2 me-3" ></div>
             <div class="btn"><a href="/chat">로그아웃</a></div>
         </div>
         <div class="row">

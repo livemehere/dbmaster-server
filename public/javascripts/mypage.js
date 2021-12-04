@@ -9,6 +9,13 @@ loadAllMsgData(); //채팅창만들고 버블만들고
 // socket 접속
 const socket = io();
 
+fetch(`/userInfo/${userID}`)
+  .then((data) => data.json())
+  .then((user) => {
+    $(".my-photo").css("background-image", `url('/${user.data.profileURL}')`);
+    console.log();
+  });
+
 // 연결되면 수행할 동작
 socket.on("connect", () => {
   console.log(`할당받은소켓ID : ${socket.id}`);
@@ -144,7 +151,7 @@ async function getFriendList() {
   await fetch(`/myFriend?userID=${userID}`)
     .then((data) => data.json())
     .then((friends) => {
-      console.log(friends);
+      // console.log(friends);
       currentFriendList = friends;
       friendList = friends;
     });
@@ -159,7 +166,7 @@ async function getFriendList() {
   friendList.forEach((friend) => {
     const template = `
     <div class="friend-card">
-    <div class="friend-photo flex-grow-2"></div>
+    <div class="friend-photo flex-grow-2" style="background-image: url('/${friend.id}.jpg')"></div>
     <div class="friend-description flex-grow-1">
         <div class="friend-name">${friend.name}</div>
         <div class="friend-status-msg">${friend.statusMsg}</div>
@@ -536,7 +543,7 @@ function loadUserListAndDisplay() {
 // 친구 검색 필터링 함수
 let filterdUserList = [];
 $("#search-input").on("input", (e) => {
-  console.log($("#search-input").val());
+  // console.log($("#search-input").val());
   filterdUserList = userList.filter((user) =>
     user.name.includes($("#search-input").val())
   );

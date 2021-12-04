@@ -66,11 +66,13 @@ $("#submit-btn").click(() => {
 
   if (!idChecked) {
     alert("아이디 중복확인을 해주세요");
+    return;
   }
 
   const file = document.getElementById("files");
   if (!file.value) {
     alert("프로필 사진은 필수입니다");
+    return;
   }
 
   //유저 프로필 사진 URL

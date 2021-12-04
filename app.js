@@ -19,7 +19,7 @@ const storage = multer.diskStorage({
     const idx = file.originalname.indexOf(".");
     const format = file.originalname.substring(idx);
     //TODO: userID + format 이거를 URL로 저장하면될듯
-    cb(null, userID + format); //사용자이름 + 파일포맷으로 설정
+    cb(null, userID + ".jpg"); //사용자이름 + 파일포맷으로 설정
   },
 });
 

@@ -17,7 +17,7 @@ router.post("/signUp", function (req, res, next) {
   const statusMsg = "신규유저";
 
   db.query(
-    `INSERT INTO ch_user VALUES('${userid}','${userpw}','${username}','${usernickname}','${userid}${profileURL}',default,'${statusMsg}','${postcode}','${address}','${extraAddress}','${detailAddress}');`,
+    `INSERT INTO ch_user VALUES('${userid}','${userpw}','${username}','${usernickname}','${userid}.jpg',default,'${statusMsg}','${postcode}','${address}','${extraAddress}','${detailAddress}');`,
     function (error, results, fields) {
       // TODO: 기본에러처리
       if (error) {
