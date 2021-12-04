@@ -51,7 +51,6 @@ $("#submit-btn").click(() => {
   const detailAddress = $("#sample6_detailAddress").val();
   const extraAddress = $("#sample6_extraAddress").val();
   if (
-    !idChecked ||
     !userid ||
     !userpw ||
     !username ||
@@ -65,8 +64,17 @@ $("#submit-btn").click(() => {
     return;
   }
 
-  //유저 프로필 사진 URL
+  if (!idChecked) {
+    alert("아이디 중복확인을 해주세요");
+  }
+
   const file = document.getElementById("files");
+  if (!file.value) {
+    alert("프로필 사진은 필수입니다");
+  }
+
+  //유저 프로필 사진 URL
+
   const file2 = file.files[0].name;
   const idx = file2.indexOf(".");
   const fileFormatWithDot = file2.substring(idx); // 사진의 포맷임 이걸 DB에 저장해야한다

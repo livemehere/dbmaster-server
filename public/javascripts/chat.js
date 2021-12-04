@@ -23,5 +23,5 @@ $(".sign-in").click(function (e) {
 
 $(".sign-up").click(function (e) {
   e.preventDefault();
-  alert("sign UP!");
+  window.location.href = "/signup";
 });
