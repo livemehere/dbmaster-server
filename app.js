@@ -83,15 +83,16 @@ app.get("/daum", (req, res) => {
 });
 
 // API service
-app.get("/sampledata", sampledataRouter);
-app.get("/dev_jwt", createJwt);
+// app.get("/sampledata", sampledataRouter);
+// app.get("/dev_jwt", createJwt);
 app.get("/userInfo/:id", userInfoRouter);
 app.get("/mypage/:id", mypageRouter);
 app.get("/signup", (req, res) => res.render("signup"));
 app.get("/edit/:userID", (req, res) =>
   res.render("edit", { userID: req.params.userID })
 );
-app.get("/upload", uploadRouter);
+// app.get("/upload", uploadRouter);
+
 app.get("/msgLog", msgLogRouter); //대화기록 로드
 app.get("/loadAllMsgData", loadAllMsgDataRouter); //대화기록 로드
 app.get("/getUserNameByID", getUserNameByIDRouter);

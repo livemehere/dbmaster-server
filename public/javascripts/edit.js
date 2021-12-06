@@ -77,7 +77,7 @@ $("#submit-btn").click(() => {
     .then((data) => data.json())
     .then((res) => {
       console.log(res);
-      alert("변경이 완료되었습니다 완료되었습니다!");
+      alert("변경이 완료되었습니다!");
       window.location.href = `/mypage/${userID}`;
     });
 });
