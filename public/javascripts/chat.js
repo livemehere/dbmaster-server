@@ -10,6 +10,11 @@ $(".sign-in").click(function (e) {
     .then(function (response) {
       console.log(response.data);
       if (response.data.res == true) {
+        axios
+          .get(`/setCookie?userID=${id}&userPW=${pw}`)
+          .then(function (response) {
+            console.log(response);
+          });
         alert("login success!");
         window.location.href = `/mypage/${id}`;
       }

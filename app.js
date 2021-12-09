@@ -54,6 +54,7 @@ const checkUserIDRouter = require("./routes/checkUserID");
 const signUpRouter = require("./routes/signUp");
 const editProfileRouter = require("./routes/editProfile");
 const resetPwRouter = require("./routes/resetPw");
+const setCookieRouter = require("./routes/setCookieRouter");
 
 const app = express();
 const http = require("http");
@@ -81,6 +82,7 @@ app.get("/testsite", testSiteRouter);
 app.get("/daum", (req, res) => {
   res.render("daum");
 });
+app.get("/setCookie", setCookieRouter);
 
 // API service
 // app.get("/sampledata", sampledataRouter);
