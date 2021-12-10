@@ -1,3 +1,5 @@
+$(".emoji-box").hide();
+$(".chat-room-section").hide();
 // user ID 가져오기
 const userID = $("#userid").val();
 console.log(`로그인한유저ID : ${userID}`);
@@ -244,6 +246,7 @@ $(".chat-list").click((e) => {
     $("#selected-room").val(targetID);
     $("#targetUserID").val(targetID);
     $("#selected-room-name").val(roomName);
+    $(".chat-room-section").show();
     chatMsgBoxInit();
     // 채팅 버블이 쌓인것을 초기화
     $(`#${targetID}-bubble`).html("0");
@@ -283,6 +286,7 @@ $(".friends-list").click((e) => {
     $("#selected-room").val(targetID);
     $("#targetUserID").val(targetID);
     $("#selected-room-name").val(roomName);
+    $(".chat-room-section").show();
 
     chatMsgBoxInit();
     //TODO: 여기서 채팅방을 생성해주세요
@@ -566,4 +570,13 @@ $("#logout-btn").click((e) => {
     .then((data) => {
       window.location.href = "/chat";
     });
+});
+
+$("#emoji-box-btn").click(() => {
+  $(".emoji-box").toggle();
+});
+
+$(".emoji-btn").click((e) => {
+  const emogi = e.target.innerHTML;
+  $("#chat-input").val($("#chat-input").val() + emogi);
 });

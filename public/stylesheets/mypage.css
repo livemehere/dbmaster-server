@@ -129,6 +129,15 @@ a {
 }
 
 /* 채팅창 */
+
+#send {
+  cursor: pointer;
+}
+
+#emoji-btn {
+  cursor: pointer;
+}
+
 .chat-room-section {
   position: relative;
 }
@@ -136,7 +145,6 @@ a {
   position: absolute;
   bottom: 0;
   width: 90%;
-  margin-left: 2rem;
 }
 .chat-room-menu {
   display: flex;
@@ -218,4 +226,27 @@ a {
 .list-group {
   max-height: 100%;
   overflow-y: scroll;
+}
+
+.emoji-box {
+  display: flex;
+  position: absolute;
+  width: 80%;
+  /* height: 30%; */
+  background-color: #eee;
+  bottom: 8%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.emoji-btn {
+  padding: 1rem;
+  cursor: pointer;
+  /* height: 10%; */
+}
+#emoji-box-btn {
+  cursor: pointer;
+}
+.emoji-btn:hover {
+  background-color: rgb(136, 136, 136);
 }

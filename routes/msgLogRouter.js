@@ -19,6 +19,7 @@ router.get("/msgLog", function (req, res, next) {
         res.status(400).send(error);
         return;
       }
+      console.log(results);
       res.send(results);
     }
   );

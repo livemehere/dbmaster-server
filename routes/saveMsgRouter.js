@@ -14,7 +14,8 @@ router.post("/saveMsg", function (req, res, next) {
     res.send("please send required element!");
     return;
   }
-  console.log(timestamp);
+  console.log(">>>>>");
+  console.log(payload);
 
   db.query(
     `INSERT INTO ch_message VALUES(default,'${payload}','${targetUserID}','${sendUserID}',${timestamp},${isRead});`,
