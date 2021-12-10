@@ -6,9 +6,9 @@ router.get("/chat", function (req, res, next) {
   const userPW = req.cookies.userPW;
 
   if (userID && userPW) {
-    res.render("mypage", { id: userID });
+    res.render("chat", { autoID: userID, autoPW: userPW });
   } else {
-    res.render("chat");
+    res.render("chat", { autoID: undefined, autoPW: undefined });
   }
 });
 

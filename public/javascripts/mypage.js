@@ -558,3 +558,12 @@ $("#search-input").on("input", (e) => {
 $(".my-photo").click(function () {
   window.location.href = `/edit/${userID}`;
 });
+
+$("#logout-btn").click((e) => {
+  e.preventDefault();
+  fetch("/removeCookie")
+    .then((response) => response.json())
+    .then((data) => {
+      window.location.href = "/chat";
+    });
+});
