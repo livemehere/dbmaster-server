@@ -580,3 +580,18 @@ $(".emoji-btn").click((e) => {
   const emogi = e.target.innerHTML;
   $("#chat-input").val($("#chat-input").val() + emogi);
 });
+
+$("#find-chat").on("change", (e) => {
+  const searchKeyWord = e.target.value;
+  let searchedChat;
+
+  $(".chat-msg").each((index, item) => {
+    const chatHtml = $(item)[0].innerHTML;
+    // console.log($(item)[0].innerHTML);
+    if (chatHtml == searchKeyWord) {
+      console.log($(item).offset().top);
+      $(".chat-msg-box").scrollTop($(item).offset().top); //스크롤 이동
+      $(item).css("background-color", "yellow");
+    }
+  });
+});
