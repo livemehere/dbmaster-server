@@ -568,11 +568,12 @@ $(".my-photo").click(function () {
 
 $("#logout-btn").click((e) => {
   e.preventDefault();
-  fetch("/removeCookie")
-    .then((response) => response.json())
-    .then((data) => {
-      window.location.href = "/chat";
-    });
+  // fetch("/removeCookie")
+  //   .then((response) => response.json())
+  //   .then((data) => {
+  //     window.location.href = "/chat";
+  //   });
+  window.location.href = "/chat";
 });
 
 $("#emoji-box-btn").click(() => {
