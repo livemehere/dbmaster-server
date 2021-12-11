@@ -28,6 +28,9 @@ socket.on("connect", () => {
 socket.on("chat", async (data) => {
   // console.log(data);
   if (data.sendUserID == $("#selected-room").val()) {
+    if (typeof data.timestamp == "string") {
+      data.timestamp = parseInt(data.timestamp);
+    }
     displayMsgBox({
       payload: data.payload,
       timestamp: moment(data.timestamp).format("LT"),
